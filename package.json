@@ -1,0 +1,21 @@
+{
+  "name": "glass-engine",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "The Glass Engine — a turbofan and an EV drivetrain rendered in crystal glass, with dispersion, caustics and progressive refinement.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/outfit": "^5.3.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  }
+}

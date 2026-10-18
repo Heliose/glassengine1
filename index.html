@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>The Glass Engine</title>
+    <meta name="description" content="A turbofan and an EV drive unit cut from crystal glass: dispersion, caustics, inner fire, and an image that refines itself to photoreal while you hold still." />
+    <meta name="theme-color" content="#05060a" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239fd8ff'/%3E%3Cstop offset='.5' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%23ffb070'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='%2306070b'/%3E%3Ccircle cx='16' cy='16' r='9.5' fill='none' stroke='url(%23g)' stroke-width='2.2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='url(%23g)'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="The Glass Engine, a 3D view"></canvas>
+
+      <header id="title" class="ui">
+        <div class="kicker">A STUDY IN LIGHT</div>
+        <h1>The Glass <em>Engine</em></h1>
+        <div class="model">
+          <span id="model-name" class="mn">Turbofan</span>
+          <span id="model-sub" class="ms"></span>
+          <span id="model-spec" class="mono mk"></span>
+        </div>
+      </header>
+
+      <nav id="toolbar" class="ui" aria-label="Tools">
+        <button class="tbtn" id="btn-still" title="Save a still (S)" aria-label="Save a still">
+          <svg viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H8l1.3-2h5.4L16 6h1.5A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.4"/></svg>
+        </button>
+        <button class="tbtn" id="btn-share" title="Copy a link to this exact look" aria-label="Copy a link to this look">
+          <svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/></svg>
+        </button>
+        <button class="tbtn" id="btn-pause" title="Pause / resume motion (Space)" aria-label="Pause or resume motion">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14"/><path d="M16 5v14"/></svg>
+        </button>
+        <button class="tbtn" id="btn-reset" title="Hero view (R)" aria-label="Hero view">
+          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>
+        </button>
+        <button class="tbtn" id="btn-eye" title="Hide the interface (H)" aria-label="Hide the interface">
+          <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="tbtn" id="btn-help" title="How it works (?)" aria-label="How it works">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.3-2.7 4"/><circle cx="12" cy="17.4" r=".4" fill="currentColor"/></svg>
+        </button>
+        <button class="tbtn" id="btn-deck" title="Show / hide the controls" aria-label="Show or hide the controls">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/><circle cx="9" cy="7" r="1.6" fill="currentColor"/><circle cx="15" cy="12" r="1.6" fill="currentColor"/><circle cx="8" cy="17" r="1.6" fill="currentColor"/></svg>
+        </button>
+      </nav>
+
+      <aside id="deck" class="ui">
+        <div class="deck-head"><span class="label">LOOKS</span><span class="mono hint">click to apply</span></div>
+        <div id="presets"></div>
+        <div id="sections"></div>
+      </aside>
+
+      <nav id="views" class="ui" aria-label="Camera views"></nav>
+
+      <div id="hud" class="ui">
+        <div class="hud-row"><span class="dot"></span><span id="hud-status">Live</span><span id="hud-count" class="mono">live</span></div>
+        <div id="hud-bar"><i></i></div>
+        <div id="hud-stats" class="mono"></div>
+      </div>
+      <div id="hint" class="ui mono">drag to orbit · hold still and the image refines · double-click to focus</div>
+
+      <div id="toast" role="status" aria-live="polite"></div>
+      <div id="tooltip"><div class="tt-title"></div><div class="tt-sub"></div></div>
+      <div id="focus-ring"></div>
+
+      <div id="help" class="overlay" hidden>
+        <div class="help-card">
+          <div class="help-head"><span class="label">HOW IT WORKS</span><button class="tbtn small" id="help-close" aria-label="Close">✕</button></div>
+          <p class="help-lede">A jet engine and an electric drive unit cut from crystal. Light splits into colour at every edge, focuses into caustics on the floor, and an inner fire lights the hot section like jewellery. Hold still and the picture refines itself, frame by frame, into a photoreal still.</p>
+          <ul></ul>
+          <div class="help-foot mono">Everything is procedural — no model files, no textures. Built on three.js r186.</div>
+        </div>
+      </div>
+
+      <div id="loader">
+        <div class="ld-mark"><span class="kicker">A STUDY IN LIGHT</span><b>The Glass <em>Engine</em></b></div>
+        <div class="ld-bar"><i></i></div>
+        <div class="ld-step mono" id="ld-step">cutting the crystal</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
