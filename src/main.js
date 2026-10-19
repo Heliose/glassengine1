@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { DEFAULTS, Store, clone, deepMerge, getPath, encodeState, decodeState } from './core/state.js';
-import { PRESETS, VIEWS, ROLES, MODELS } from './core/content.js';
+import { PRESETS, viewsFor, ROLES, MODELS } from './core/content.js';
 import { tween, tweenP, updateTweens, tweensActive, easeInOutCubic, easeOutCubic } from './core/tween.js';
 import { damp, halton } from './core/rng.js';
 import { GlassMaterial, createSharedGlassUniforms, TONE_MAP } from './scene/materials.js';
@@ -275,9 +275,11 @@ app.highlightRole = (role) => {
 /* ------------------------------------------------------------------ */
 /* Camera views                                                        */
 /* ------------------------------------------------------------------ */
-function poseOf(view) {
-  const v = VIEWS[view], R = app.modelRadius, c = app.modelCenter;
-  const az = THREE.MathUtils.degToRad(v.az), polar = THREE.MathUtils.degToRad(v.polar), dist = v.dist * R * Math.max(1, 1.25 / camera.aspect) ** 0.8;
+function poseOf(view, lead = 0) {
+  const v = viewsFor(app.assembly.id)[view], R = app.modelRadius, c = app.modelCenter;
+  // azimuths are relative to the machine: add the turntable yaw, predicted `lead` seconds ahead
+  const yaw = app.assembly.root.rotation.y + S().motion.turntable * motion.level * lead;
+  const az = THREE.MathUtils.degToRad(v.az) + yaw, polar = THREE.MathUtils.degToRad(v.polar), dist = v.dist * R * Math.max(1, 1.25 / camera.aspect) ** 0.8;
   return new THREE.Vector3(c.x + dist * Math.sin(polar) * Math.sin(az), c.y + dist * Math.cos(polar), c.z + dist * Math.sin(polar) * Math.cos(az));
 }
 let camTween = null;
@@ -303,7 +305,7 @@ function goto(pos, target, ms = 1400) {
 app.gotoView = (id) => {
   app.view = id;
   ui.markView(id);
-  goto(poseOf(id), app.modelCenter.clone(), 1500);
+  goto(poseOf(id, 1.5), app.modelCenter.clone(), 1500);
   motion.touch(performance.now());
 };
 
@@ -463,7 +465,7 @@ function wire() {
     else if (e.key === '?') ui.toggleHelp();
     else if (e.key === 'Escape') ui.toggleHelp(false);
     else {
-      const v = Object.entries(VIEWS).find(([, x]) => x.key === e.key);
+      const v = Object.entries(viewsFor(app.assembly.id)).find(([, x]) => x.key === e.key);
       if (v) app.gotoView(v[0]);
     }
   });

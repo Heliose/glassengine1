@@ -19,7 +19,7 @@ Useful URL parameters: `?skip` jumps past the intro, `?model=drivetrain` starts 
 
 | | |
 |---|---|
-| **Orbit** | drag · right-drag pans · wheel zooms · `1`–`6` jump to camera views, `R` returns to the hero view |
+| **Orbit** | drag · right-drag pans · wheel zooms · `1`–`6` jump to named camera views (Intake, Profile, Exhaust… for the turbofan; Gears, Profile, Motor end… for the drive unit). Views are relative to the machine, so they stay true however far the turntable has turned · `R` returns to the hero view |
 | **Hold still** | the engine comes to rest for its portrait and the image refines (anti-aliasing, true depth of field, soft shadows, soft caustics and a continuous spectrum converge over up to 1024 frames). Any interaction brings it back to life |
 | **Double-click** | sets the focus plane for depth of field on the part under the cursor |
 | **Click a part** | selects its glass in the panel · hover for its name and spec |

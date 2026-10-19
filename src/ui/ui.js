@@ -1,5 +1,5 @@
 import { makeControls, el } from './controls.js';
-import { PRESETS, VIEWS, ROLES, STUDIOS, MODELS, HELP, TONE_MAPPINGS, BACKGROUNDS, POLICIES } from '../core/content.js';
+import { PRESETS, viewsFor, ROLES, STUDIOS, MODELS, HELP, TONE_MAPPINGS, BACKGROUNDS, POLICIES } from '../core/content.js';
 
 /* ------------------------------------------------------------------ *
  * The deck: presets, seven folders of controls, toolbar, views, HUD,
@@ -246,6 +246,7 @@ export class UI {
       const w = this.C.slider({ label: s.label, path: map[s.id], min: -4, max: 4, format: (v) => `${(v * 9.5493).toFixed(0)} rpm` });
       this.speedsWrap.appendChild(w);
     }
+    this.buildViews(A.id);
     $('#model-name').textContent = A.name;
     $('#model-sub').textContent = A.sub;
     $('#model-spec').textContent = `${A.parts.size} parts · ${Math.round(A.triangles / 1000)}k triangles · ${A.glassMeshes.length} draws`;
@@ -255,15 +256,18 @@ export class UI {
   }
 
   /* ---------- views + toolbar ---------- */
-  buildViews() {
+  buildViews(modelId = 'jet') {
     const wrap = $('#views');
+    wrap.innerHTML = '';
     this.viewBtns = {};
-    for (const [id, v] of Object.entries(VIEWS)) {
+    for (const [id, v] of Object.entries(viewsFor(modelId))) {
       const b = el('button', 'view', `<span>${v.name}</span><kbd>${v.key}</kbd>`);
+      b.title = `${v.name} view (${v.key})`;
       b.addEventListener('click', () => this.app.gotoView(id));
       wrap.appendChild(b);
       this.viewBtns[id] = b;
     }
+    if (this.app.view) this.markView(this.app.view);
   }
   markView(id) {
     for (const [k, b] of Object.entries(this.viewBtns)) b.classList.toggle('on', k === id);

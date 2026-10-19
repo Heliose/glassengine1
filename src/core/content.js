@@ -241,15 +241,32 @@ export const PRESETS = [
   },
 ];
 
-/** Camera views: spherical pose around the model centre (az/polar in degrees, dist in model radii). */
-export const VIEWS = {
-  hero: { name: 'Hero', az: 38, polar: 66, dist: 3.1, key: '1' },
-  intake: { name: 'Intake', az: 8, polar: 80, dist: 2.6, key: '2' },
-  profile: { name: 'Profile', az: 90, polar: 78, dist: 3.4, key: '3' },
-  exhaust: { name: 'Exhaust', az: 150, polar: 70, dist: 3.0, key: '4' },
-  macro: { name: 'Macro', az: 22, polar: 72, dist: 1.35, key: '5' },
-  top: { name: 'Overhead', az: 60, polar: 20, dist: 3.2, key: '6' },
+/**
+ * Camera views: a spherical pose around the model centre (az/polar in degrees, dist in model
+ * radii). Azimuths are relative to the machine, not the stage: the app adds the turntable's
+ * current yaw, so "Intake" always arrives facing the fan. Ids are shared across models (they
+ * are the keyboard keys); names and poses are per machine.
+ */
+export const MODEL_VIEWS = {
+  jet: {
+    hero: { name: 'Hero', az: 38, polar: 66, dist: 3.1, key: '1' },
+    intake: { name: 'Intake', az: 8, polar: 80, dist: 2.6, key: '2' },
+    profile: { name: 'Profile', az: 90, polar: 78, dist: 3.4, key: '3' },
+    exhaust: { name: 'Exhaust', az: 150, polar: 70, dist: 3.0, key: '4' },
+    macro: { name: 'Macro', az: 22, polar: 72, dist: 1.35, key: '5' },
+    top: { name: 'Overhead', az: 60, polar: 20, dist: 3.2, key: '6' },
+  },
+  drivetrain: {
+    hero: { name: 'Hero', az: 38, polar: 66, dist: 3.1, key: '1' },
+    intake: { name: 'Gears', az: -90, polar: 76, dist: 2.3, key: '2' },
+    profile: { name: 'Profile', az: 180, polar: 78, dist: 3.2, key: '3' },
+    exhaust: { name: 'Motor end', az: 110, polar: 70, dist: 2.8, key: '4' },
+    macro: { name: 'Windings', az: -60, polar: 70, dist: 1.4, key: '5' },
+    top: { name: 'Overhead', az: 60, polar: 20, dist: 3.2, key: '6' },
+  },
 };
+export const viewsFor = (modelId) => MODEL_VIEWS[modelId] || MODEL_VIEWS.jet;
+export const VIEWS = MODEL_VIEWS.jet;
 
 export const HELP = [
   ['Drag', 'orbit · right-drag pans · wheel zooms'],
@@ -257,7 +274,7 @@ export const HELP = [
   ['Double-click', 'sets the focus plane for depth of field'],
   ['Click a part', 'selects its glass in the panel · hover for its name'],
   ['Space', 'pause / resume motion'],
-  ['1 – 6', 'camera views · R returns to the hero view'],
+  ['1 – 6', 'camera views, named for the machine and true whatever way it has turned · R returns to the hero view'],
   ['H', 'hide the interface · S saves a still · ? toggles this card'],
 ];
 
